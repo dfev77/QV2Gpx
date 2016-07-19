@@ -1,0 +1,5 @@
+.vs/
+QV2Gpx/bin/
+QV2Gpx/obj/
+*.user
+packages/**
