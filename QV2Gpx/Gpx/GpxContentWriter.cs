@@ -24,12 +24,7 @@ namespace QV2Gpx.Gpx
                 using (GpxWriter writer = new GpxWriter(output))
                 {
                     writer.StartTrack(track);
-
-                    foreach (TrackSegment point in db.GetTrackPoints(track.Id))
-                    {
-                        writer.WritePoint(point);
-                    }
-
+                    writer.WriteTrackSegment(db.GetTrackPoints(track.Id));
                     writer.EndTrack();
                 }
             }

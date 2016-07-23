@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QV2Gpx.Model
 {
-    internal class TrackSegment
+    internal class TrackPoint
     {
         public int Id;
         public float Latitude;

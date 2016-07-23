@@ -36,11 +36,11 @@ namespace QV2GpxTests
             var outputStream = new StringWriterWithEncoding();
             var sut = new GpxWriter(outputStream);
             var track = new Track() { Id = 1, Name = "test" };
-            var point = new TrackSegment() { Id = 1, Elevation = 12.5f, Latitude = 12.22f, Longitude = 41.32f, Time = new DateTime(1989, 12, 16, 17, 32, 15)};
+            var point = new TrackPoint() { Id = 1, Elevation = 12.5f, Latitude = 12.22f, Longitude = 41.32f, Time = new DateTime(1989, 12, 16, 17, 32, 15)};
 
             //act
             sut.StartTrack(track);
-            sut.WritePoint(point);
+            sut.WriteTrackSegment(point);
             sut.EndTrack();
             sut.Close();
 

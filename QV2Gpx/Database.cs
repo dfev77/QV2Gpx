@@ -23,7 +23,7 @@ namespace QV2Gpx
             _connection.Open();
         }
 
-        public IEnumerable<TrackSegment> GetTrackPoints(int trackId)
+        public IEnumerable<TrackPoint> GetTrackPoints(int trackId)
         {
             using (var command = _connection.CreateCommand())
             {
@@ -36,7 +36,7 @@ namespace QV2Gpx
                     {
                         DateTime date = (DateTime)reader["date"];
                         DateTime time = (DateTime)reader["time"];
-                        yield return new TrackSegment()
+                        yield return new TrackPoint()
                         {
                             Id = (int)reader["trp_idx"],
                             Latitude = (float)reader["lat"],

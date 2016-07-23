@@ -82,7 +82,7 @@
     <Compile Include="Gpx\GpxContentWriter.cs" />
     <Compile Include="Gpx\GpxWriter.cs" />
     <Compile Include="IContentWriter.cs" />
-    <Compile Include="Model\TrackSegment.cs" />
+    <Compile Include="Model\TrackPoint.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\Track.cs" />

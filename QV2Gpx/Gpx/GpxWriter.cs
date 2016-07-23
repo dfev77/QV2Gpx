@@ -63,7 +63,15 @@ namespace QV2Gpx
             _writer.WriteElementString("name", track.Name);
         }
 
-        public void WritePoint(Model.TrackSegment point)
+        public void WriteTrackSegment(IEnumerable<Model.TrackPoint> points)
+        {
+            foreach(Model.TrackPoint point in points)
+            {
+                WriteTrackSegment(point);
+            }
+        }
+
+        public void WriteTrackSegment(Model.TrackPoint point)
         {
             StartSegment();
             _writer.WriteStartElement("trkpt");
@@ -106,8 +114,6 @@ namespace QV2Gpx
             _writer.Flush();
             _writer.Close();
         }
-
-
 
         #region IDisposable Support
         private bool disposedValue = false;
