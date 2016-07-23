@@ -8,7 +8,7 @@ namespace QV2Gpx
 {
     internal class ConsoleWriter : IContentWriter
     {
-        public void ExportAllTracks(Database db)
+        public void ExportAllTracks(IDatabase db)
         {
             Console.WriteLine("Tracks:");
             foreach (Track track in db.GetTracks())

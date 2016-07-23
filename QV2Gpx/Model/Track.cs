@@ -8,18 +8,19 @@ namespace QV2Gpx.Model
 
         public string GetFileName()
         {
-            if (Name.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) < 0)
+            string returnValue = Name;
+
+            if (returnValue.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1)
             {
-                return Name;
+                const char replacementChar = '_';
+
+                foreach (char invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                {
+                    returnValue = returnValue.Replace(invalidChar, replacementChar);
+                }
             }
 
-            const char replacementChar = '_';
-            foreach (char invalidChar in System.IO.Path.GetInvalidFileNameChars())
-            {
-                Name = Name.Replace(invalidChar, replacementChar);
-            }
-
-            return Name + ".gpx";
+            return returnValue + ".gpx";
         }
     }
 }

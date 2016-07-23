@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" creator="QV2Gpx#0.1" version="1.1">
+  <trk>
+    <name>test</name>
+  </trk>
+  <wpt lat="12.22" lon="41.32">
+    <ele>12.5</ele>
+    <time>1966-09-08T19:00:00</time>
+    <name>point name</name>
+    <description>beautifull point</description>
+  </wpt>
+  <wpt lat="12.22" lon="41.32">
+    <ele>12.5</ele>
+    <time>1966-09-08T19:00:00</time>
+    <name>point 2</name>
+    <description>beautifull point</description>
+  </wpt>
+</gpx>

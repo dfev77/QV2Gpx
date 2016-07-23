@@ -8,6 +8,6 @@ namespace QV2Gpx
 {
     internal interface IContentWriter
     {
-        void ExportAllTracks(Database db);
+        void ExportAllTracks(IDatabase db);
     }
 }

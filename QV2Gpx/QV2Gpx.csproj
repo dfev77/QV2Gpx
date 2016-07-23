@@ -81,7 +81,11 @@
     <Compile Include="Database.cs" />
     <Compile Include="Gpx\GpxContentWriter.cs" />
     <Compile Include="Gpx\GpxWriter.cs" />
+    <Compile Include="Gpx\GpxWriterFactory.cs" />
+    <Compile Include="Gpx\IGpxWriter.cs" />
     <Compile Include="IContentWriter.cs" />
+    <Compile Include="IDatabase.cs" />
+    <Compile Include="Model\PointOfInterest.cs" />
     <Compile Include="Model\TrackPoint.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

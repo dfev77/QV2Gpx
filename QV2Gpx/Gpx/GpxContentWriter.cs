@@ -6,7 +6,16 @@ namespace QV2Gpx.Gpx
 {
     internal class GpxContentWriter : IContentWriter
     {
-        public void ExportAllTracks(Database db)
+        private IGpxWriterFactory _writerFactory;
+
+        internal GpxContentWriter() : this(new GpxWriterFactory()) { }
+
+        internal GpxContentWriter(IGpxWriterFactory writerFactory)
+        {
+            _writerFactory = writerFactory;
+        }
+
+        public void ExportAllTracks(IDatabase db)
         {
             foreach (Track track in db.GetTracks())
             {
@@ -14,21 +23,19 @@ namespace QV2Gpx.Gpx
             }
         }
 
-        private void WriteTrackToFile(Database db, Track track)
+        private void WriteTrackToFile(IDatabase db, Track track)
         {
             var filePath = track.GetFileName();
-            using (FileStream output = new FileStream(filePath, FileMode.Create))
-            {
-                Console.WriteLine($"Export track #{track.Id} '{track.Name}' to file '{filePath}'");
+            Console.WriteLine($"Export track #{track.Id} '{track.Name}' to file '{filePath}'");
 
-                using (GpxWriter writer = new GpxWriter(output))
-                {
-                    writer.StartTrack(track);
-                    writer.WriteTrackSegment(db.GetTrackPoints(track.Id));
-                    writer.EndTrack();
-                }
+            using (IGpxWriter writer = _writerFactory.Create(filePath))
+            {
+                var points = db.GetPointsOfInterest(track.Id);
+                writer.WritePoints(points);
+                writer.StartTrack(track);
+                writer.WriteTrackPoints(db.GetTrackPoints(track.Id));
+                writer.EndTrack();
             }
         }
-
     }
 }

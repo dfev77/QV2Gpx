@@ -8,13 +8,16 @@ using System.IO;
 
 namespace QV2Gpx
 {
-    internal class Database : IDisposable
+    internal class Database : IDisposable, IDatabase
     {
         private readonly string _filePath;
         private OleDbConnection _connection;
+        private DateBuilder _dateBuider;
+
         public Database(string filePath)
         {
             _filePath = filePath;
+            _dateBuider = new DateBuilder();
         }
 
         public void Open()
@@ -27,22 +30,20 @@ namespace QV2Gpx
         {
             using (var command = _connection.CreateCommand())
             {
-                command.CommandText = $"select trp_idx, lat, lon, alt, date, time, speed, course from Tracks_trp where tr_idx = {trackId} order by trp_idx ASC";
+                command.CommandText = $"select trp_idx, lat, lon, alt, [date], [time] from Tracks_trp where tr_idx = {trackId} order by trp_idx ASC";
                 command.CommandType = System.Data.CommandType.Text;
 
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        DateTime date = (DateTime)reader["date"];
-                        DateTime time = (DateTime)reader["time"];
                         yield return new TrackPoint()
                         {
                             Id = (int)reader["trp_idx"],
                             Latitude = (float)reader["lat"],
                             Longitude = (float)reader["lon"],
                             Elevation = (float)reader["alt"],
-                            Time = date.AddHours(time.Hour).AddMinutes(time.Minute).AddSeconds(time.Second).AddMilliseconds(time.Millisecond),
+                            Time = _dateBuider.Build((DateTime)reader["date"], (DateTime)reader["time"]),
                         };
                     }
                 }
@@ -69,6 +70,42 @@ namespace QV2Gpx
                 }
             }
         }
+        private string GetPointsTableName(int trackId)
+        {
+            return $"{Path.GetFileNameWithoutExtension(_filePath)}_WPseria{trackId:00}";
+        }
+
+        public IEnumerable<PointOfInterest> GetPointsOfInterest(int trackId)
+        {            
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = $"select wp_idx, name, lat, lon, description, [date], [time], alt from {GetPointsTableName(trackId)} order by wp_idx asc";
+                command.CommandType = System.Data.CommandType.Text;
+                using (var reader = command.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                    {
+                        yield break;
+                    }
+
+                    while (reader.Read())
+                    {
+                        yield return new PointOfInterest
+                        {
+                            Id = (int)reader["wp_idx"],
+                            Name = (string)reader["name"],
+                            Description = (string)reader["description"],
+                            Latitude = (float)reader["lat"],
+                            Longitude = (float)reader["lon"],
+                            Elevation = (float)reader["alt"],
+                            Time = _dateBuider.Build((DateTime)reader["date"], (DateTime)reader["time"])
+                        };
+                    }
+                }
+            }
+        }
+
+        
         
         #region IDisposable Support
         private bool disposedValue = false;
@@ -93,4 +130,11 @@ namespace QV2Gpx
         #endregion
     }
 
+    internal class DateBuilder
+    {
+        public DateTime Build(DateTime date, DateTime time)
+        {
+            return date.AddHours(time.Hour).AddMinutes(time.Minute).AddSeconds(time.Second).AddMilliseconds(time.Millisecond);
+        }
+    }
 }

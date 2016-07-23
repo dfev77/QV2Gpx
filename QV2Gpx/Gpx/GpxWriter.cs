@@ -1,33 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml;
 using System.IO;
 
 namespace QV2Gpx
-{
-    internal class GpxWriter : IDisposable
+{    
+    internal class GpxWriter : IDisposable, IGpxWriter
     {
+        private static readonly System.Globalization.CultureInfo culture = System.Globalization.CultureInfo.InvariantCulture;
         private readonly XmlWriter _writer;
         private bool _rootNodeWritten;
         private bool _segmentStarted;
 
+        public GpxWriter(string filePath)
+        {
+            this._writer = XmlWriter.Create(filePath, GetWriterSettings(true));
+        }
+
         public GpxWriter(TextWriter baseStream)
         {
-            this._writer = XmlWriter.Create(baseStream, GetWriterSettings());
+            this._writer = XmlWriter.Create(baseStream, GetWriterSettings(false));
         }
-
-        public GpxWriter(Stream baseStream)
-        {
-            this._writer = XmlWriter.Create(baseStream, GetWriterSettings());
-        }
-
-        private XmlWriterSettings GetWriterSettings()
+        
+        private XmlWriterSettings GetWriterSettings(bool autoClose)
         {
             return new XmlWriterSettings()
             {
                 Encoding = System.Text.Encoding.UTF8,
                 Indent = true,
+                CloseOutput = autoClose,
             };
         }
 
@@ -63,17 +64,18 @@ namespace QV2Gpx
             _writer.WriteElementString("name", track.Name);
         }
 
-        public void WriteTrackSegment(IEnumerable<Model.TrackPoint> points)
+        public void WriteTrackPoints(IEnumerable<Model.TrackPoint> points)
         {
             foreach(Model.TrackPoint point in points)
             {
-                WriteTrackSegment(point);
+                WriteTrackPoint(point);
             }
         }
 
-        public void WriteTrackSegment(Model.TrackPoint point)
+        public void WriteTrackPoint(Model.TrackPoint point)
         {
             StartSegment();
+
             _writer.WriteStartElement("trkpt");
             _writer.WriteAttributeString("lat", point.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture));
             _writer.WriteAttributeString("lon", point.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture));
@@ -113,6 +115,38 @@ namespace QV2Gpx
             _writer.WriteEndElement();
             _writer.Flush();
             _writer.Close();
+        }
+
+        public void WritePoints(IEnumerable<Model.PointOfInterest> points)
+        {
+            foreach (Model.PointOfInterest point in points)
+            {
+                WritePoint(point);
+            }
+        }
+
+        public void WritePoint(Model.PointOfInterest point)
+        {
+            InitializeXml();
+
+            _writer.WriteStartElement("wpt");
+            _writer.WriteAttributeString("lat", point.Latitude.ToString(culture));
+            _writer.WriteAttributeString("lon", point.Longitude.ToString(culture));
+            _writer.WriteElementString("ele", point.Elevation.ToString(culture));
+            _writer.WriteElementString("time", point.Time.ToString("s"));
+            WriteElementIfNotEmpty("name", point.Name);
+            WriteElementIfNotEmpty("description", point.Description);
+            _writer.WriteEndElement();
+
+            _writer.Flush();
+        }
+
+        private void WriteElementIfNotEmpty(string name, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                _writer.WriteElementString(name, value);
+            }
         }
 
         #region IDisposable Support
