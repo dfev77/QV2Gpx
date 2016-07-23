@@ -24,7 +24,7 @@ namespace QV2Gpx.Model
                 Name = Name.Replace(invalidChar, replacementChar);
             }
 
-            return Name;
+            return Name + ".gpx";
         }
     }
 }

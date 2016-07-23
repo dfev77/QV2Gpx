@@ -25,16 +25,21 @@ namespace QV2Gpx
                 using (var con = new Database(settings.InputFile))
                 {
                     con.Open();
+                    IContentWriter writer;
 
                     switch (settings.Command)
                     {
                         case Commands.List:
-                            con.DumpTracks();
+                            writer = new ConsoleWriter();
                             break;
                         case Commands.Export:
-                            con.ExportAllTracksToFile();
+                            writer = new Gpx.GpxContentWriter();
                             break;
+                        default:
+                            throw new ArgumentOutOfRangeException($"Unknown command: {settings.Command}");
                     }
+
+                    writer.ExportAllTracks(con);
                 }
 
                 return 0;

@@ -77,7 +77,11 @@
     <Compile Include="AppInfo.cs" />
     <Compile Include="CliArguments.cs" />
     <Compile Include="Commands.cs" />
+    <Compile Include="ConsoleWriter.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="Gpx\GpxContentWriter.cs" />
+    <Compile Include="Gpx\GpxWriter.cs" />
+    <Compile Include="IContentWriter.cs" />
     <Compile Include="Model\TrackSegment.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
