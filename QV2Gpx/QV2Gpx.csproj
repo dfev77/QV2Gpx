@@ -45,6 +45,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -85,8 +86,11 @@
     <Compile Include="Gpx\IGpxWriter.cs" />
     <Compile Include="IContentWriter.cs" />
     <Compile Include="IDatabase.cs" />
+    <Compile Include="IProcessor.cs" />
     <Compile Include="Model\PointOfInterest.cs" />
     <Compile Include="Model\TrackPoint.cs" />
+    <Compile Include="Processor\FileProcessor.cs" />
+    <Compile Include="Processor\FolderProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\Track.cs" />

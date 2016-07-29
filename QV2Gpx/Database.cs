@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
-using System.Text;
-using System.Xml;
 using QV2Gpx.Model;
 using System.IO;
 
@@ -18,6 +16,11 @@ namespace QV2Gpx
         {
             _filePath = filePath;
             _dateBuider = new DateBuilder();
+        }
+
+        public string Name
+        {
+            get { return Path.GetFileNameWithoutExtension(_filePath); }
         }
 
         public void Open()
@@ -75,8 +78,33 @@ namespace QV2Gpx
             return $"{Path.GetFileNameWithoutExtension(_filePath)}_WPseria{trackId:00}";
         }
 
+        private bool TableExists(string tableName)
+        {
+            try
+            {
+                using (var command = _connection.CreateCommand())
+                {
+                    command.CommandText = $"select 1 from {tableName}";
+                    command.CommandType = System.Data.CommandType.Text;
+                    using (var reader = command.ExecuteReader())
+                    {
+                        return reader.HasRows;
+                    }
+                }
+            }catch(OleDbException)
+            {
+                // ugly, but no reason to check, for now, for exception details (HResult = -2147217865)
+                return false;
+            }
+        }
+
         public IEnumerable<PointOfInterest> GetPointsOfInterest(int trackId)
         {            
+            if (!TableExists(GetPointsTableName(trackId)))
+            {
+                yield break;
+            }
+
             using (var command = _connection.CreateCommand())
             {
                 command.CommandText = $"select wp_idx, name, lat, lon, description, [date], [time], alt from {GetPointsTableName(trackId)} order by wp_idx asc";

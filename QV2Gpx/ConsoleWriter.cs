@@ -10,7 +10,7 @@ namespace QV2Gpx
     {
         public void ExportAllTracks(IDatabase db)
         {
-            Console.WriteLine("Tracks:");
+            Console.WriteLine($"Tracks for '{db.Name}':");
             foreach (Track track in db.GetTracks())
             {
                 Console.WriteLine($"\t{track.Id}: {track.Name}");

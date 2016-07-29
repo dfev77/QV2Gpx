@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using QV2Gpx.Processor;
+using System;
 
 namespace QV2Gpx
 {
@@ -17,31 +14,21 @@ namespace QV2Gpx
                 var parseResult = CliParse.ParsableExtensions.CliParse(settings, args);
                 if (!parseResult.Successful || parseResult.ShowHelp)
                 {
-                    Console.WriteLine(CliParse.ParsableExtensions.GetHelpInfo(settings, "{title}\r\n{description}\r\n{syntax}\r\n{footer}",
-                "-{shortname}, --{name} - {description} {required}, {defaultvalue}, {example}"));
+                    ShowHelp(settings, parseResult);
                     return -1;
                 }
 
-                using (var con = new Database(settings.InputFile))
+                IProcessor processor = null;
+                if (System.IO.File.Exists(settings.InputPath))
                 {
-                    con.Open();
-                    IContentWriter writer;
-
-                    switch (settings.Command)
-                    {
-                        case Commands.List:
-                            writer = new ConsoleWriter();
-                            break;
-                        case Commands.Export:
-                            writer = new Gpx.GpxContentWriter();
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException($"Unknown command: {settings.Command}");
-                    }
-
-                    writer.ExportAllTracks(con);
+                    processor = new FileProcessor(settings.InputPath, settings.OutputPath);
+                }
+                else if (System.IO.Directory.Exists(settings.InputPath))
+                {
+                    processor = new FolderProcessor(settings.InputPath, settings.OutputPath);
                 }
 
+                processor?.Process(settings.Command);
                 return 0;
 
             } catch(Exception ex)
@@ -54,6 +41,21 @@ namespace QV2Gpx
                 Console.WriteLine("Press Enter to exit");
                 Console.ReadLine();
             }
+        }
+
+        private static void ShowHelp(CliArguments settings, CliParse.CliParseResult parseResult)
+        {
+            Console.WriteLine(CliParse.ParsableExtensions.GetHelpInfo(settings, "{title}\r\n{description}"));
+
+            if (!parseResult.Successful)
+            {
+                Console.WriteLine(string.Join(Environment.NewLine, parseResult.CliParseMessages));
+                Console.WriteLine();
+            }
+
+            Console.WriteLine(CliParse.ParsableExtensions.GetHelpInfo(settings, 
+                                                                      "{syntax}\r\n{footer}",
+                                                                      "-{shortname}, --{name} - {description} {required}, {defaultvalue}, {example}"));
         }
     }
 }

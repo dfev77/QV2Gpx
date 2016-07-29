@@ -6,9 +6,12 @@ namespace QV2Gpx.Gpx
 {
     internal class GpxContentWriter : IContentWriter
     {
+        private readonly string _outputFolder;
         private IGpxWriterFactory _writerFactory;
 
-        internal GpxContentWriter() : this(new GpxWriterFactory()) { }
+        internal GpxContentWriter(string outputFolder) : this(new GpxWriterFactory()) {
+            _outputFolder = outputFolder;
+        }
 
         internal GpxContentWriter(IGpxWriterFactory writerFactory)
         {
@@ -22,10 +25,13 @@ namespace QV2Gpx.Gpx
                 WriteTrackToFile(db, track);
             }
         }
-
+        
         private void WriteTrackToFile(IDatabase db, Track track)
         {
-            var filePath = track.GetFileName();
+            var folder = Path.Combine(_outputFolder, db.Name);
+            Directory.CreateDirectory(folder);
+
+            var filePath = Path.Combine(folder, track.GetFileName());
             Console.WriteLine($"Export track #{track.Id} '{track.Name}' to file '{filePath}'");
 
             using (IGpxWriter writer = _writerFactory.Create(filePath))
