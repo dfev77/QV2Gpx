@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using QV2Gpx.Model;
 
 namespace QV2Gpx
 {
     internal class ConsoleWriter : IContentWriter
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public void ExportAllTracks(IDatabase db)
         {
-            Console.WriteLine($"Tracks for '{db.Name}':");
+            logger.Info($"Tracks for '{db.Name}':");
+            
             foreach (Track track in db.GetTracks())
             {
-                Console.WriteLine($"\t{track.Id}: {track.Name}");
+                logger.Info($"\t{track.Id}: {track.Name}");
             }
         }
     }

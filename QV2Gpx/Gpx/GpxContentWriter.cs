@@ -6,6 +6,8 @@ namespace QV2Gpx.Gpx
 {
     internal class GpxContentWriter : IContentWriter
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly string _outputFolder;
         private IGpxWriterFactory _writerFactory;
 
@@ -32,7 +34,7 @@ namespace QV2Gpx.Gpx
             Directory.CreateDirectory(folder);
 
             var filePath = Path.Combine(folder, track.GetFileName());
-            Console.WriteLine($"Export track #{track.Id} '{track.Name}' to file '{filePath}'");
+            logger.Info($"Export track {db.Name} - '{track.Name}' (#{track.Id}) to file '{filePath}'");
 
             using (IGpxWriter writer = _writerFactory.Create(filePath))
             {

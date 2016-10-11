@@ -5,9 +5,9 @@ namespace QV2Gpx.Processor
 {
     public class FolderProcessor : IProcessor
     {
+        public const string QuoVadisExtension = "*.qu3";
         private readonly string _inputFolder;
         private string _outputFolder;
-
 
         public FolderProcessor(string inputFolder, string outputFolder)
         {
@@ -17,7 +17,7 @@ namespace QV2Gpx.Processor
 
         public void Process(Commands command)
         {
-            foreach (string filePath in Directory.GetFiles(_inputFolder, "*.qu3", SearchOption.AllDirectories))
+            foreach (string filePath in Directory.GetFiles(_inputFolder, QuoVadisExtension, SearchOption.AllDirectories))
             {
                 var subfolder = Path.GetDirectoryName(filePath);
                 var intermediateOutputFolder = (subfolder == _inputFolder) ? 
